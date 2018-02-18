@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewBag.Title = "WeatherJS";
+}
+
+<h2>WeatherJS</h2>
+
+<p id="name"> </p>
+<p id="temp"> </p>
+<p id="humidity"></p>
+<p id="description"> </p>
+<p id="country"></p>
+
+<input type="button" name="button" id="selam" value="Ekle">
+<input type="text" name="text1" id="text1" value="şehir girin"><br>
+<input type="button" name="button" id="geri" value="geri">
+<input type="button" name="button" id="ileri" value="ileri">
+<script>
+    var country = [];
+    var btnSelam = document.getElementById("selam");
+    var btnText = document.getElementById("text1");
+    btnSelam.onclick = function () {
+        
+        country.push(btnText.value);
+        console.log(country);
+        document.getElementById("country").innerHTML ="İller: " + country;
+    }
+    
+
+</script>
+
+<button>Sıcaklık Al</button>
+<script>
+    var array = [];
+    var kelime;
+    var bla;
+    var sayac = 0;
+    var sehir = 0;
+    $("#geri").hide(100);
+    $("#ileri").hide(100);
+    $(document).ready(function(){
+        $("button").click(function () {
+            array = [];
+            sayac = 0;
+            console.log("girdim");
+            console.log(" hey " + array);
+            country.forEach(function (entry) {
+                $("#geri").show(100);
+                $("#ileri").show(100);
+                kelime = "http://api.openweathermap.org/data/2.5/weather?q="
+                kelime = kelime.concat(entry + "&APPID=d78faac163cbac500bcf96a76eed82d0&units=imperial");
+               
+                $.get(kelime, function (response) {
+                    if (array.lenght == country.length)
+                        array = [];
+                  array.push(response.name);
+                  response.weather.forEach(function (entry1) {
+                      array[sayac]= array[sayac].concat(" " +  response.main.temp + " " + response.main.humidity + " " + entry1.description);
+                  });
+                  console.log(response);
+                  sayac++;
+                });
+                
+            }); 
+            console.log(array);
+            console.log(country);   
+        });
+        
+    });
+    var btngeri = document.getElementById("geri");
+    var btnileri = document.getElementById("ileri");
+    btngeri.onclick = function () {
+        if (sehir > 0) {
+            sehir--;
+            bla = array[sehir].split(" ");
+            document.getElementById("description").innerHTML = "";
+            document.getElementById("name").innerHTML = bla[0];
+            document.getElementById("temp").innerHTML = bla[1];
+            document.getElementById("humidity").innerHTML = bla[2];
+            for (var i = 3; i < bla.length; i++) {
+                document.getElementById("description").innerHTML += bla[i];
+            }
+        }
+       
+    }
+    btnileri.onclick = function () {
+        if (sehir < array.length-1 )  {
+            sehir++;
+            bla= array[sehir].split(" ");
+            document.getElementById("description").innerHTML = "";
+            document.getElementById("name").innerHTML = bla[0] ;
+            document.getElementById("temp").innerHTML = bla[1] + " F derece" ;
+            document.getElementById("humidity").innerHTML = bla[2] + " Nem oranı";
+            for (var i = 3; i < bla.length; i++) {
+            document.getElementById("description").innerHTML += bla[i] +" " ;
+            }
+            
+        }
+
+    }
+    var saniye = 20;
+    function bak() {
+        if (saniye > 0) saniye = saniye - 1;
+        else {
+            saniye = 20;
+            console.log("10 saniye oldu");
+            $("button").click();
+            
+        }
+    }
+    $(document).ready(function () {
+        setInterval(bak, 1000);
+    });
+</script>
